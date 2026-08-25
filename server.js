@@ -5,6 +5,8 @@ import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
 import courseRoutes from "./routes/courseRoutes.js";
 import enrollmentRoutes from "./routes/enrollmentRoutes.js";
+import quizRoutes from "./routes/quizRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 import errorHandler from "./middleware/error.js";
 
 dotenv.config();
@@ -19,6 +21,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/users", userRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/enrollments", enrollmentRoutes);
+app.use("/api/quiz", quizRoutes);
+app.use("/api/auth", authRoutes);
 
 //error handling middleware
 app.use(errorHandler);
