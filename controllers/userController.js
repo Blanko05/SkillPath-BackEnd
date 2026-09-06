@@ -1,9 +1,8 @@
 import {pool} from '../config/db.js'
-import formatId from '../utils/formatId.js'
 
 function formatUser(user) {
   return {
-    id: formatId('usr', user.id),
+    id: user.id,
     name: user.name,
     email: user.email,
     role: user.role,
@@ -82,11 +81,17 @@ export const updateUserById = async (req, res, next) => {
   const userId = req.params.id;
   const { name, email, role, password } = req.body;
   try {
-    const existingUser = await pool.query('SELECT id FROM users WHERE id = $1', [userId]);
+    const existingUser = await pool.query('SELECT id, password_hash FROM users WHERE id = $1', [userId]);
     if (existingUser.rows.length === 0) {
       return res.status(404).json({ message: `User with ID ${userId} not found` });
     }
-    const passwordhash = password; // In a real application, you should hash the password before storing it
+    const emailTaken = await pool.query('SELECT id FROM users WHERE email = $1 AND id != $2', [email, userId]);
+    if (emailTaken.rows.length > 0) {
+      return res.status(400).json({ message: `Email ${email} is already in use by another user` });
+    }
+    // Password is optional on update - omitting it (e.g. an admin changing
+    // just the role) keeps the user's existing password instead of wiping it.
+    const passwordhash = password || existingUser.rows[0].password_hash;
     const result = await pool.query(
       'UPDATE users SET name = $1, email = $2, password_hash = $3, role = $4 WHERE id = $5 RETURNING id, name, email, password_hash, role, created_at',
       [name, email, passwordhash, role, userId]
@@ -108,6 +113,13 @@ export const deleteUserById = async (req, res, next) => {
       const existingUser = await pool.query('SELECT id FROM users WHERE id = $1', [userId]);
         if (existingUser.rows.length === 0) {
             return res.status(404).json({ message: `User with ID ${userId} not found` });
+        }
+        const ownedCourses = await pool.query('SELECT COUNT(*) FROM courses WHERE manager_id = $1', [userId]);
+        const courseCount = parseInt(ownedCourses.rows[0].count, 10);
+        if (courseCount > 0) {
+            return res.status(400).json({
+                message: `Cannot delete this user: they still manage ${courseCount} course(s). Reassign or delete those courses first.`
+            });
         }
         await pool.query('DELETE FROM users WHERE id = $1', [userId]);
         res.status(200).json({ message: `User with ID ${userId} deleted successfully` });
