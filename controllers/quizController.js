@@ -1,6 +1,5 @@
 import { pool } from "../config/db.js";
 import openai from "../config/openai.js";
-import formatId from "../utils/formatId.js";
 import { fetchCourseById } from "./courseController.js";
 
 const MODEL = process.env.OPENAI_MODEL || "gpt-4o-mini";
@@ -154,9 +153,49 @@ export const submitQuiz = async (req, res, next) => {
     );
 
     res.status(201).json({
-      quizResponseId: formatId("qz", quizResponseId),
+      quizResponseId: quizResponseId,
       recommendations: formattedRecommendations,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+//@desc List a user's past quiz submissions and their recommendations
+//@route GET /api/quiz?userId=X
+export const getQuizResponsesByUser = async (req, res, next) => {
+  const userId = req.query.userId;
+  if (!userId) {
+    return res.status(400).json({ message: "userId query parameter is required" });
+  }
+  try {
+    const quizResult = await pool.query(
+      "SELECT id, created_at FROM quiz_responses WHERE user_id = $1 ORDER BY created_at DESC",
+      [userId],
+    );
+
+    const results = await Promise.all(
+      quizResult.rows.map(async (quiz) => {
+        const recResult = await pool.query(
+          "SELECT * FROM recommendations WHERE quiz_response_id = $1 ORDER BY rank ASC",
+          [quiz.id],
+        );
+        const recommendations = await Promise.all(
+          recResult.rows.map(async (rec) => ({
+            rank: rec.rank,
+            course: await fetchCourseById(rec.course_id),
+            aiRationale: rec.ai_rationale,
+          })),
+        );
+        return {
+          quizResponseId: quiz.id,
+          createdAt: quiz.created_at,
+          recommendations,
+        };
+      }),
+    );
+
+    res.status(200).json(results);
   } catch (error) {
     next(error);
   }
@@ -189,7 +228,7 @@ export const getQuizResponseById = async (req, res, next) => {
     );
 
     res.status(200).json({
-      quizResponseId: formatId("qz", quizResponseId),
+      quizResponseId: quizResponseId,
       recommendations: formattedRecommendations,
     });
   } catch (error) {
