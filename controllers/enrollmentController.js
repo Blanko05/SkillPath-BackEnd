@@ -1,11 +1,10 @@
 import { pool } from "../config/db.js";
-import formatId from "../utils/formatId.js";
 import { fetchUserById } from "./userController.js";
 import { fetchCourseById } from "./courseController.js";
 
 const formatEnrollment = (enrollment) => {
   return {
-    id: formatId("enr", enrollment.id),
+    id: enrollment.id,
     userId: enrollment.user_id,
     courseId: enrollment.course_id,
     enrolledAt: enrollment.enrolled_at,
@@ -13,7 +12,7 @@ const formatEnrollment = (enrollment) => {
 };
 const extendEnrollment = async (enrollment) => {
   return {
-    id: formatId("enr", enrollment.id),
+    id: enrollment.id,
     user: await fetchUserById(enrollment.user_id),
     course: await fetchCourseById(enrollment.course_id),
     enrolledAt: enrollment.enrolled_at,
