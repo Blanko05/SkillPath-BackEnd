@@ -7,23 +7,23 @@ TRUNCATE TABLE recommendations, quiz_responses, enrollments, courses, users
 
 -- ===== Users =====
 INSERT INTO users (name, email, password_hash, role) VALUES
-    ('Admin User', 'admin@skillpath.com', 'placeholder_hash', 'admin'),
-    ('Omar Nasser', 'omar@skillpath.com', 'placeholder_hash', 'manager'),
-    ('Layla Hassan', 'layla@skillpath.com', 'placeholder_hash', 'manager'),
-    ('Fatima Zahra', 'fatima@skillpath.com', 'placeholder_hash', 'manager'),
-    ('Kareem Fahad', 'kareem@skillpath.com', 'placeholder_hash', 'manager'),
-    ('Sara Khaled', 'sara@example.com', 'placeholder_hash', 'student'),
-    ('Yousef Ali', 'yousef@example.com', 'placeholder_hash', 'student'),
-    ('Maya Odeh', 'maya@example.com', 'placeholder_hash', 'student'),
-    ('Ali Hamdan', 'ali@example.com', 'placeholder_hash', 'student'),
-    ('Noor Saleh', 'noor@example.com', 'placeholder_hash', 'student'),
-    ('Tariq Younis', 'tariq@example.com', 'placeholder_hash', 'student'),
-    ('Rana Aziz', 'rana@example.com', 'placeholder_hash', 'student'),
-    ('Hassan Khoury', 'hassan@example.com', 'placeholder_hash', 'student'),
-    ('Dina Mansour', 'dina@example.com', 'placeholder_hash', 'student'),
-    ('Zaid Barakat', 'zaid@example.com', 'placeholder_hash', 'student'),
-    ('Lina Farouk', 'lina@example.com', 'placeholder_hash', 'student'),
-    ('Karim Sabbagh', 'karim@example.com', 'placeholder_hash', 'student');
+    ('Admin User', 'admin@skillpath.com', 'password123', 'admin'),
+    ('Omar Nasser', 'omar@skillpath.com', 'password123', 'manager'),
+    ('Layla Hassan', 'layla@skillpath.com', 'password123', 'manager'),
+    ('Fatima Zahra', 'fatima@skillpath.com', 'password123', 'manager'),
+    ('Kareem Fahad', 'kareem@skillpath.com', 'password123', 'manager'),
+    ('Sara Khaled', 'sara@example.com', 'password123', 'student'),
+    ('Yousef Ali', 'yousef@example.com', 'password123', 'student'),
+    ('Maya Odeh', 'maya@example.com', 'password123', 'student'),
+    ('Ali Hamdan', 'ali@example.com', 'password123', 'student'),
+    ('Noor Saleh', 'noor@example.com', 'password123', 'student'),
+    ('Tariq Younis', 'tariq@example.com', 'password123', 'student'),
+    ('Rana Aziz', 'rana@example.com', 'password123', 'student'),
+    ('Hassan Khoury', 'hassan@example.com', 'password123', 'student'),
+    ('Dina Mansour', 'dina@example.com', 'password123', 'student'),
+    ('Zaid Barakat', 'zaid@example.com', 'password123', 'student'),
+    ('Lina Farouk', 'lina@example.com', 'password123', 'student'),
+    ('Karim Sabbagh', 'karim@example.com', 'password123', 'student');
 
 -- ===== Courses =====
 -- Omar Nasser: Databases / Backend
@@ -131,3 +131,96 @@ INSERT INTO enrollments (user_id, course_id) VALUES
     ((SELECT id FROM users WHERE email = 'karim@example.com'), (SELECT id FROM courses WHERE title = 'Cloud Computing with AWS')),
     ((SELECT id FROM users WHERE email = 'karim@example.com'), (SELECT id FROM courses WHERE title = 'Advanced PostgreSQL')),
     ((SELECT id FROM users WHERE email = 'karim@example.com'), (SELECT id FROM courses WHERE title = 'Node.js & Express Fundamentals'));
+
+-- ===== Course content (longer body text shown on the course detail page) =====
+-- Safe to re-run; matches courses by title.
+
+UPDATE courses SET content = 'This course starts from the assumption that you have never written a line of SQL before. You will learn how relational databases organize data into tables, how to write SELECT queries to pull exactly the information you need, and how to filter, sort, and combine results using WHERE, ORDER BY, and JOIN.
+
+By the end, you will be comfortable designing simple table structures, writing multi-table queries, and understanding why relational databases remain the backbone of most real-world applications.
+
+No prior database experience is assumed - just basic comfort using a computer.' WHERE title = 'Intro to SQL';
+
+UPDATE courses SET content = 'Once you know the basics of SQL, this course goes under the hood of PostgreSQL itself. You will learn how the query planner decides how to execute a query, how indexes actually speed things up (and when they do not), and how to read an EXPLAIN ANALYZE output without guessing.
+
+We cover B-tree and hash indexes, connection pooling, transaction isolation levels, and common patterns for avoiding lock contention in production systems.
+
+This is a hands-on course: every concept is paired with a real dataset you will optimize yourself.' WHERE title = 'Advanced PostgreSQL';
+
+UPDATE courses SET content = 'Learn how to build a real backend API from an empty folder. Starting with plain Node.js, you will build up to a full Express application with routing, middleware, and JSON request/response handling.
+
+Topics include structuring routes and controllers, connecting to a database, validating incoming requests, and returning consistent error responses - the same patterns used by production REST APIs everywhere.
+
+By the end you will have built and tested a small but complete API of your own.' WHERE title = 'Node.js & Express Fundamentals';
+
+UPDATE courses SET content = 'Real data is messy. This course teaches you how to clean it, reshape it, and pull insight out of it using Python''s two most important data libraries: pandas and numpy.
+
+You will practice loading real datasets, handling missing values, merging multiple data sources together, and producing summary statistics that actually answer a question - not just describe a spreadsheet.
+
+Comfort with basic Python syntax (variables, loops, functions) is assumed.' WHERE title = 'Python for Data Analysis';
+
+UPDATE courses SET content = 'This course builds a practical foundation in machine learning without skipping the math that actually matters. You will implement linear and logistic regression from first principles, then move on to decision trees and basic ensemble methods.
+
+Just as importantly, you will learn how to evaluate a model honestly: train/test splits, cross-validation, and the difference between a model that looks good on paper and one that actually generalizes.
+
+Some familiarity with Python and basic statistics will make this course much easier to follow.' WHERE title = 'Machine Learning Foundations';
+
+UPDATE courses SET content = 'Data is only useful if someone can understand it. This course teaches you to build clear, honest dashboards in Tableau - starting with connecting a data source, through choosing the right chart type for the story you are telling.
+
+You will learn the difference between a chart that looks impressive and one that actually communicates, including common pitfalls like misleading axes and overcrowded dashboards.
+
+No coding required - this course is entirely hands-on inside Tableau itself.' WHERE title = 'Data Visualization with Tableau';
+
+UPDATE courses SET content = 'Containers solve a real problem: "it works on my machine" stops being an excuse. This course walks through Docker from the ground up - images, containers, volumes, and networking - using small, practical examples rather than abstract theory.
+
+By the end, you will be able to containerize a simple application yourself and understand what is actually happening when you run `docker build` and `docker run`.
+
+This course is intentionally short and focused - a solid on-ramp before diving into orchestration tools like Kubernetes.' WHERE title = 'Docker Fundamentals';
+
+UPDATE courses SET content = 'Once your application is containerized, Kubernetes is how you run it reliably at scale. This course covers pods, deployments, services, and config management on a real cluster - not just diagrams on a slide.
+
+You will practice rolling out updates without downtime, debugging a pod that will not start, and understanding how Kubernetes decides where your workloads actually run.
+
+Prior Docker experience is expected - this is not an introductory container course.' WHERE title = 'Kubernetes in Practice';
+
+UPDATE courses SET content = 'Security is not a single tool, it is a way of thinking about systems. This course introduces the core principles: the CIA triad, common attack categories, and the layered-defense mindset that shows up in every serious security program.
+
+You will look at real-world breach case studies to understand not just what went wrong technically, but what process failures allowed it to happen.
+
+No prior security background needed - this is the recommended starting point before more specialized courses.' WHERE title = 'Introduction to Cybersecurity';
+
+UPDATE courses SET content = 'This course teaches penetration testing fundamentals in a safe, legal lab environment built specifically for practice. You will learn the standard methodology - reconnaissance, scanning, exploitation, and reporting - used by real security assessments.
+
+Hands-on labs cover common web application vulnerabilities and basic network exploitation techniques, always framed around understanding defenses, not causing harm.
+
+Completion of Introduction to Cybersecurity (or equivalent experience) is recommended before starting this course.' WHERE title = 'Ethical Hacking Basics';
+
+UPDATE courses SET content = 'Cloud platforms can feel overwhelming because of how much they offer. This course focuses on the AWS services you will actually use most often: EC2 for compute, S3 for storage, RDS for managed databases, and IAM for access control.
+
+You will deploy a small real application to AWS yourself, understand what you are paying for and why, and learn the security basics that prevent the most common (and most expensive) cloud misconfigurations.
+
+Basic familiarity with how web applications work is helpful but not required.' WHERE title = 'Cloud Computing with AWS';
+
+UPDATE courses SET content = 'Good design starts long before anyone opens a design tool. This course covers the fundamentals of user research, how to turn research into wireframes, and how to run a usability test that actually surfaces real problems.
+
+You will practice interviewing users, sketching low-fidelity wireframes, and iterating on a design based on feedback rather than personal preference.
+
+This course is tool-agnostic - the thinking applies whether you eventually work in Figma, Sketch, or pen and paper.' WHERE title = 'UX Design Principles';
+
+UPDATE courses SET content = 'This course assumes you are already comfortable with React and pushes further into the patterns that separate a working app from a maintainable one: compound components, render props versus hooks, context performance pitfalls, and code-splitting.
+
+You will refactor a deliberately messy real component together, applying each pattern where it actually solves a problem - not just because it exists.
+
+This is not a beginner React course - solid experience with hooks and component composition is required.' WHERE title = 'Advanced React Patterns';
+
+UPDATE courses SET content = 'Build a real iOS application from scratch using Swift and SwiftUI. You will learn how views, state, and navigation work together in a native iOS app, and how to connect your app to a backend API for real data.
+
+By the end of the course you will have built and run a complete small app on the iOS simulator, understanding the full path from a blank Xcode project to a working product.
+
+Some prior programming experience is expected; prior Swift or mobile experience is not.' WHERE title = 'iOS App Development with Swift';
+
+UPDATE courses SET content = 'Figma has become the industry standard for product design, and this course teaches it properly - not just where the buttons are, but how to build a design system that scales. You will learn components, variants, and auto layout well enough to build a reusable UI kit.
+
+We also cover prototyping and handoff: how to make a design that developers can actually implement without guessing at your intent.
+
+This course is being finalized - check back soon for the full outline.' WHERE title = 'Figma for Product Designers';
